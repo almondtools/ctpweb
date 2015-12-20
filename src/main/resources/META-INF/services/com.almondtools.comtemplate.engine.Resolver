@@ -1,2 +1,2 @@
-com.almondtools.ctpweb.matchers.HtmlEqualToMatcher
-
+com.almondtools.ctpweb.MergeHtmlAttributes
+com.almondtools.ctpweb.EscapeHtml
