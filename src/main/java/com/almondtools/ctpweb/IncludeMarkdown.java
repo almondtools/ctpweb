@@ -4,13 +4,14 @@ import static com.almondtools.comtemplate.engine.TemplateParameter.param;
 import static com.almondtools.comtemplate.engine.TemplateVariable.var;
 import static com.almondtools.comtemplate.engine.expressions.StringLiteral.string;
 
-import java.io.File;
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.jsoup.nodes.Element;
+import org.pegdown.PegDownProcessor;
 
 import com.almondtools.comtemplate.engine.ArgumentRequiredException;
 import com.almondtools.comtemplate.engine.Scope;
@@ -22,18 +23,19 @@ import com.almondtools.comtemplate.engine.expressions.IOResolutionError;
 import com.almondtools.comtemplate.engine.expressions.RawText;
 import com.almondtools.comtemplate.processor.TemplateProcessor;
 
-public class IncludeHtml extends TemplateDefinition {
+public class IncludeMarkdown extends TemplateDefinition {
 
-	public static final String NAME = "includeHtml";
+	public static final String NAME = "includeMarkdown";
 	public static final String SOURCE = "source";
 	public static final String CHARSET = "charset";
-	public static final String SELECT = "select";
 
-	private static final String DEFAULT_SELECT = "html";
 	private static final String DEFAULT_CHARSET = "utf-8";
 	
-	public IncludeHtml() {
-		super(NAME, SOURCE, param(CHARSET, string(DEFAULT_CHARSET)), param(SELECT, string(DEFAULT_SELECT)));
+	private PegDownProcessor processor;
+	
+	public IncludeMarkdown() {
+		super(NAME, SOURCE, param(CHARSET, string(DEFAULT_CHARSET)));
+		this.processor = new PegDownProcessor();
 	}
 
 	@Override
@@ -42,10 +44,6 @@ public class IncludeHtml extends TemplateDefinition {
 		
 		String source = findVariable(SOURCE, variables)
 			.orElseThrow(() -> new ArgumentRequiredException(SOURCE))
-			.getValue().apply(interpreter, parent)
-			.getText();
-		String select = findVariable(SELECT, variables)
-			.orElse(var(SELECT, string(DEFAULT_SELECT)))
 			.getValue().apply(interpreter, parent)
 			.getText();
 		String charset = findVariable(CHARSET, variables)
@@ -58,23 +56,22 @@ public class IncludeHtml extends TemplateDefinition {
 			.getText();
 		
 		try {
-			Document document = loadDocument(base , source, charset);
-			
-			Element selected = document.select(select).first();
-			
-			return new RawText(selected.html());
+			String document = loadDocument(base, source, charset);
+			String html = processor.markdownToHtml(document);
+			return new RawText(html);
 		} catch (IOException e) {
 			return new IOResolutionError(e.getMessage());
 		}
 		
 	}
 
-	public Document loadDocument(String base, String source, String charset) throws IOException {
-		File file = new File(source);
-		if (!file.exists()) {
-			file = new File(base, source);
+	public String loadDocument(String base, String source, String charset) throws IOException {
+		Path file = Paths.get(source);
+		if (!Files.exists(file)) {
+			file = Paths.get(base, source);
 		}
-		return Jsoup.parse(file, charset);
+		
+		return new String(Files.readAllBytes(file), Charset.forName(charset));
 	}
 
 }

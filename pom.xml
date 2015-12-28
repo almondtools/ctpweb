@@ -47,6 +47,11 @@
 			<version>1.8.3</version>
 		</dependency>
 		<dependency>
+			<groupId>org.pegdown</groupId>
+			<artifactId>pegdown</artifactId>
+			<version>1.6.0</version>
+		</dependency>
+		<dependency>
 			<groupId>com.github.almondtools</groupId>
 			<artifactId>comtemplate</artifactId>
 			<version>0.1.0-SNAPSHOT</version>
@@ -54,6 +59,12 @@
 		<dependency>
 			<groupId>com.github.almondtools</groupId>
 			<artifactId>ctpunit</artifactId>
+			<version>0.1.0-SNAPSHOT</version>
+			<scope>test</scope>
+		</dependency>
+		<dependency>
+			<groupId>com.github.almondtools</groupId>
+			<artifactId>ctpwebunit</artifactId>
 			<version>0.1.0-SNAPSHOT</version>
 			<scope>test</scope>
 		</dependency>
