@@ -14,6 +14,7 @@ testFooter ::= footer(content="content", attributes=["a","b"]).htmlEqualTo('<foo
 
 testSection ::= section(content="content", attributes=["a","b"]).htmlEqualTo('<section a b>content</section>')
 
+testTitle ::= title(content="mytitle", attributes=["a","b"]).htmlEqualTo('<title a b>mytitle</title>')
 testMeta ::= meta(attributes=["a","b"]).htmlEqualTo('<meta a b/>')
 
 testLink ::= link(attributes=["a","b"]).htmlEqualTo('<link a b/>')

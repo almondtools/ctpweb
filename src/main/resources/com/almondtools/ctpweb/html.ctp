@@ -22,6 +22,10 @@ meta(attributes=[]) ::= {
   <meta`for(att=attributes.mergeHtmlAttributes,do={ `@att`})`/>
 }
 
+title(content="", attributes=[]) ::= {
+  <title`for(att=attributes.mergeHtmlAttributes,do={ `@att`})`>`content`</title>
+}
+
 link(attributes=[]) ::= {
   <link`for(att=attributes.mergeHtmlAttributes,do={ `@att`})`/>
 }
