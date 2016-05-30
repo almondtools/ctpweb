@@ -1,4 +1,4 @@
-att(key="", value="") ::= {`if(cond=any([not(value.empty()),@force?:false]),then={`key`="`value`"})`}
+att(key="", value="") ::= {<<if(cond=any([not(value.empty()),@force?:false]),then={<<key>>="<<value>>"})>>}
 
 force(attribute, force=true) ::= attribute
 
