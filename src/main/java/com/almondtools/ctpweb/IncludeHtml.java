@@ -29,7 +29,7 @@ public class IncludeHtml extends TemplateDefinition {
 	public static final String CHARSET = "charset";
 	public static final String SELECT = "select";
 
-	private static final String DEFAULT_SELECT = "html";
+	private static final String DEFAULT_SELECT = "body";
 	private static final String DEFAULT_CHARSET = "utf-8";
 	
 	public IncludeHtml() {
