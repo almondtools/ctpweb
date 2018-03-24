@@ -38,6 +38,7 @@ public class IncludeHtml extends TemplateDefinition {
 
 	@Override
 	public TemplateImmediateExpression evaluate(TemplateInterpreter interpreter, Scope parent, List<TemplateVariable> arguments) {
+		try {
 		List<TemplateVariable> variables = createVariables(arguments);
 		
 		String source = findVariable(SOURCE, variables)
@@ -54,10 +55,9 @@ public class IncludeHtml extends TemplateDefinition {
 			.getText();
 		
 		String base = parent.resolveContextVariable(TemplateProcessor.SOURCE)
-			.getValue().apply(interpreter, parent)
-			.getText();
+			.map(v -> v.getValue().apply(interpreter, parent).getText())
+			.orElse(null);
 		
-		try {
 			Document document = loadDocument(base , source, charset);
 			
 			Element selected = document.select(select).first();
