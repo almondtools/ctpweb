@@ -30,6 +30,10 @@ link(attributes=[]) ::= {
   <link<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>/>
 }
 
+base(attributes=[]) ::= {
+  <base<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>/>
+}
+
 script(content="", attributes=[]) ::= {
   <script<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>><<content>></script>
 }
