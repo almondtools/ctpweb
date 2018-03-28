@@ -56,6 +56,12 @@ footer(content="", attributes=[]) ::= {
   </footer>
 }
 
+main(content="", attributes=[]) ::= {
+  <main<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>>
+    <<content>>
+  </main>
+}
+
 section(content="", attributes=[]) ::= {
   <section<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>>
     <<content>>

@@ -9,6 +9,11 @@ navbar(content="", attributes=[]) ::= {
   	<<nav(content, attributes=[aClass("navbar"), aRole("navigation")]~attributes)>>
 }
 
+navbarfixed(content="", attributes=[]) ::= {
+    <<nav(content, attributes=[aClass("navbar fixed-top"), aRole("navigation")]~attributes)>>
+    <<div("", attributes=[aClass("navbar-placeholder")])>>
+}
+
 navbarHeader(content="", attributes=[]) ::= div(content, aClass("navbar-header")~attributes)
 
 pageHeader(content="", attributes=[]) ::= div(content, aClass("page-header")~attributes)
