@@ -154,3 +154,27 @@ pre(content="", attributes=[]) ::= {
   <pre<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>><<content.trim>></pre>
 }
 
+table(content="", attributes=[]) ::= {
+  <table<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>><<content>></table>
+}
+
+thead(content="", attributes=[]) ::= {
+  <thead<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>><<content>></thead>
+}
+
+tbody(content="", attributes=[]) ::= {
+  <tbody<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>><<content>></tbody>
+}
+
+tr(content="", attributes=[]) ::= {
+  <tr<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>><<content>></tr>
+}
+
+th(content="", attributes=[]) ::= {
+  <th<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>><<content>></th>
+}
+
+td(content="", attributes=[]) ::= {
+  <td<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>><<content>></td>
+}
+
