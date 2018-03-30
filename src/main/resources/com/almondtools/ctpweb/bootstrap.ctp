@@ -20,18 +20,16 @@ pageHeader(content="", attributes=[]) ::= div(content, aClass("page-header")~att
 
 container(content="", attributes=[]) ::= div(content, aClass("container")~attributes)
 
-panel(heading="", body="", attributes=[]) ::= {
+card(heading="", body="", attributes=[]) ::= {
 	<<div({
-		<<div(heading, attributes=[aClass("panel-heading")])>>
-		<<div(body, attributes=[aClass("panel-body")])>>
-	}, attributes=aClass("panel")~attributes)>>
+		<<div(heading, attributes=[aClass("card-header")])>>
+		<<div(body, attributes=[aClass("card-body")])>>
+	}, attributes=aClass("card")~attributes)>>
 }
 
 jumbotron(content, attributes=[]) ::= {
 	<<div(content, attributes=aClass("jumbotron")~attributes)>>
 }
-
-panelDefault(heading="", body="", attributes=[]) ::= panel(heading, body, aClass("panel-default")~attributes)
 
 row(content="", attributes=[]) ::= div(content, aClass("row")~attributes)
 

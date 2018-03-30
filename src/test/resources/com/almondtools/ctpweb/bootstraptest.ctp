@@ -15,10 +15,8 @@ testNavbarHeaderAdditionalClasses ::= navbarHeader("navbarheader-content", attri
 testContainer ::= container("content", attributes=["a","b"]).htmlEqualTo('<div class="container" a b>content</div>')
 testContainerAdditionalClasses ::= container("content", attributes=[aClass("c")]).htmlEqualTo('<div class="container c">content</div>')
 
-testPanel ::= panel("heading", "body", attributes=["a","b"]).htmlEqualTo('<div class="panel" a b><div class="panel-heading">heading</div><div class="panel-body">body</div></div>')
-testPanelAdditionalClasses ::= panel("heading", "body", attributes=[aClass("c")]).htmlEqualTo('<div class="panel c"><div class="panel-heading">heading</div><div class="panel-body">body</div></div>')
-
-testPanelDefault ::= panelDefault(heading="heading", body="body", attributes=["a","b"]).htmlEqualTo(panel("heading","body",attributes=["a","b",aClass("panel-default")]))
+testCard ::= card("heading", "body", attributes=["a","b"]).htmlEqualTo('<div class="card" a b><div class="card-header">heading</div><div class="card-body">body</div></div>')
+testCardAdditionalClasses ::= card("heading", "body", attributes=[aClass("c")]).htmlEqualTo('<div class="card c"><div class="card-header">heading</div><div class="card-body">body</div></div>')
 
 testRow ::= row("content", attributes=["a","b"]).htmlEqualTo('<div class="row" a b>content</div>')
 testRowAdditionalClasses ::= row("content", attributes=[aClass("c")]).htmlEqualTo('<div class="row c">content</div>')
