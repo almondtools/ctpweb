@@ -9,7 +9,10 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.almondtools.comtemplate.engine.ArgumentRequiredException;
 import com.almondtools.comtemplate.engine.ContextRequiredException;
@@ -18,15 +21,20 @@ import com.almondtools.comtemplate.engine.TemplateDefinition;
 import com.almondtools.comtemplate.engine.TemplateImmediateExpression;
 import com.almondtools.comtemplate.engine.TemplateInterpreter;
 import com.almondtools.comtemplate.engine.TemplateVariable;
+import com.almondtools.comtemplate.engine.expressions.EvalTemplateFunction;
 import com.almondtools.comtemplate.engine.expressions.IOResolutionError;
 import com.almondtools.comtemplate.engine.expressions.RawText;
 import com.almondtools.comtemplate.processor.TemplateProcessor;
+import com.vladsch.flexmark.Extension;
 import com.vladsch.flexmark.ast.Document;
+import com.vladsch.flexmark.ext.jekyll.tag.JekyllTag;
+import com.vladsch.flexmark.ext.jekyll.tag.JekyllTagExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
 import com.vladsch.flexmark.profiles.pegdown.Extensions;
 import com.vladsch.flexmark.profiles.pegdown.PegdownOptionsAdapter;
 import com.vladsch.flexmark.util.options.DataHolder;
+import com.vladsch.flexmark.util.options.MutableDataSet;
 
 public class IncludeMarkdown extends TemplateDefinition {
 
@@ -51,7 +59,16 @@ public class IncludeMarkdown extends TemplateDefinition {
 	}
 
 	private DataHolder configure() {
-		return PegdownOptionsAdapter.flexmarkOptions(true, Extensions.ALL & ~-Extensions.ANCHORLINKS);
+		MutableDataSet config = new MutableDataSet(PegdownOptionsAdapter.flexmarkOptions(true, Extensions.ALL & ~-Extensions.ANCHORLINKS));
+		Iterable<Extension> base = config.get(Parser.EXTENSIONS);
+		List<Extension> extensions = new ArrayList<>();
+		for (Extension extension : base) {
+			extensions.add(extension);
+		}
+		extensions.add(JekyllTagExtension.create());
+		config.set(JekyllTagExtension.LIST_INCLUDES_ONLY, false);
+		config.set(Parser.EXTENSIONS, extensions);
+		return config;
 	}
 
 	@Override
@@ -79,6 +96,8 @@ public class IncludeMarkdown extends TemplateDefinition {
 			String document = loadDocument(base, source, charset);
 			Document node = parser.parse(document);
 
+			computeIncludes(node, interpreter, parent);
+
 			node.set(MarkdownLinkResolver.LINKBASE, linkbase);
 			String html = renderer.render(node);
 			return new RawText(html);
@@ -86,6 +105,21 @@ public class IncludeMarkdown extends TemplateDefinition {
 			return new IOResolutionError(e.getMessage());
 		}
 
+	}
+
+	@SuppressWarnings("unlikely-arg-type")
+	private void computeIncludes(Document doc, TemplateInterpreter interpreter, Scope scope) {
+		Map<String, String> includes = new HashMap<>();
+		List<JekyllTag> tags = doc.get(JekyllTagExtension.TAG_LIST);
+		for (JekyllTag tag : tags) {
+			String template = tag.getParameters().toString();
+			if (tag.getTag().equals("include") && !template.isEmpty()) {
+				String text = new EvalTemplateFunction(template, null).apply(interpreter, scope).getText();
+				includes.put(template, text);
+			}
+
+		}
+		doc.set(JekyllTagExtension.INCLUDED_HTML, includes);
 	}
 
 	public String loadDocument(String base, String source, String charset) throws IOException {
