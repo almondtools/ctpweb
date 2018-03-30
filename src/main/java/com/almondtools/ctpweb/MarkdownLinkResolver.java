@@ -1,5 +1,7 @@
 package com.almondtools.ctpweb;
 
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.Set;
 
 import com.vladsch.flexmark.ast.Node;
@@ -21,9 +23,26 @@ public class MarkdownLinkResolver implements LinkResolver {
 	@Override
 	public ResolvedLink resolveLink(Node node, LinkResolverContext context, ResolvedLink link) {
 		LinkType linkType = link.getLinkType();
-		String url = context.getOptions().get(LINKBASE) + link.getUrl();
+		String url = link.getUrl();
+		if (isRelative(url)) {
+			url = context.getOptions().get(LINKBASE) + url;
+		}
 		Attributes attributes = link.getAttributes();
 		return new ResolvedLink(linkType, url, attributes);
+	}
+
+	protected boolean isRelative(String url) {
+		try {
+			URI uri = new URI(url);
+			if (uri.isAbsolute()) {
+				return false;
+			} else if (uri.getPath().startsWith("/")) {
+				return false;
+			}
+			return true;
+		} catch (URISyntaxException e) {
+			return false;
+		}
 	}
 
 	public static class Factory implements LinkResolverFactory {
