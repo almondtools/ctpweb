@@ -42,20 +42,6 @@ colClass(xs="", sm="", md="", lg="") ::= {
 	<<if(lg.empty,"",{col-lg-<<lg>>})>>
 }.trim.compress
 
-pushClass(xs="", sm="", md="", lg="") ::= {
-	<<if(xs.empty,"",{col-xs-push-<<xs>>})>>
-	<<if(sm.empty,"",{col-sm-push-<<sm>>})>>
-	<<if(md.empty,"",{col-md-push-<<md>>})>>
-	<<if(lg.empty,"",{col-lg-push-<<lg>>})>>
-}.trim.compress
-
-pullClass(xs="", sm="", md="", lg="") ::= {
-	<<if(xs.empty,"",{col-xs-pull-<<xs>>})>>
-	<<if(sm.empty,"",{col-sm-pull-<<sm>>})>>
-	<<if(md.empty,"",{col-md-pull-<<md>>})>>
-	<<if(lg.empty,"",{col-lg-pull-<<lg>>})>>
-}.trim.compress
-
 alert(content="", attributes=[]) ::= div(content, aClass("alert")~aRole("alert")~attributes)
 
 info(content="", attributes=[]) ::= alert(content, aClass("alert-info")~attributes)

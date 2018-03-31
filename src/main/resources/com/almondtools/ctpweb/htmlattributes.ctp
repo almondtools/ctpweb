@@ -8,6 +8,8 @@ aId(value="") ::= att(key="id",value=value)
 
 aContent(value="") ::= att(key="content",value=value)
 
+aHttpEquiv(value="") ::= att(key="http-equiv",value=value)
+
 aCharset(value="") ::= att(key="charset",value=value)
 
 aClass(value="") ::= att(key="class",value=value)

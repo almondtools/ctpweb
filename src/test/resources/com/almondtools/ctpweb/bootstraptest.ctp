@@ -34,19 +34,6 @@ testColClassSm ::= colClass(sm="8").htmlEqualTo('col-sm-8')
 testColClassMd ::= colClass(md="7").htmlEqualTo('col-md-7')
 testColClassLg ::= colClass(lg="6").htmlEqualTo('col-lg-6')
 
-testPushClass ::= pushClass(xs="9", sm="8", md="7", lg="6").htmlEqualTo('col-xs-push-9 col-sm-push-8 col-md-push-7 col-lg-push-6')
-testPushClassXs ::= pushClass(xs="9").htmlEqualTo('col-xs-push-9')
-testPushClassSm ::= pushClass(sm="8").htmlEqualTo('col-sm-push-8')
-testPushClassMd ::= pushClass(md="7").htmlEqualTo('col-md-push-7')
-testPushClassLg ::= pushClass(lg="6").htmlEqualTo('col-lg-push-6')
-
-testPullClass ::= pullClass(xs="9", sm="8", md="7", lg="6").htmlEqualTo('col-xs-pull-9 col-sm-pull-8 col-md-pull-7 col-lg-pull-6')
-testPullClassXs ::= pullClass(xs="9").htmlEqualTo('col-xs-pull-9')
-testPullClassSm ::= pullClass(sm="8").htmlEqualTo('col-sm-pull-8')
-testPullClassMd ::= pullClass(md="7").htmlEqualTo('col-md-pull-7')
-testPullClassLg ::= pullClass(lg="6").htmlEqualTo('col-lg-pull-6')
-testPullClass ::= pullClass(xs="9", sm="8", md="7", lg="6").htmlEqualTo('col-xs-pull-9 col-sm-pull-8 col-md-pull-7 col-lg-pull-6')
-
 testAlert ::= alert("content",attributes=["a","b"]).htmlEqualTo('<div class="alert" role="alert" a b>content</div>')
 testAlertAdditionalClasses ::= alert("content",attributes=[aClass("c")]).htmlEqualTo('<div class="alert c" role="alert">content</div>')
 

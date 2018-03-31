@@ -118,6 +118,12 @@ button(content="", attributes=[]) ::= {
   </button>
 }
 
+img(content="", attributes=[]) ::= {
+  <img<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>>
+    <<content>>
+  </img>
+}
+
 ul(content="", attributes=[]) ::= {
   <ul<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>>
     <<content>>
