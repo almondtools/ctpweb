@@ -40,3 +40,6 @@ testHttpEquivDefaults ::= aHttpEquiv().htmlEqualTo('')
 
 testHreflang ::= aHreflang("value").htmlEqualTo('hreflang="value"')
 testHreflangDefaults ::= aHreflang().htmlEqualTo('')
+
+testLang ::= aLang("value").htmlEqualTo('lang="value"')
+testLangDefaults ::= aLang().htmlEqualTo('')

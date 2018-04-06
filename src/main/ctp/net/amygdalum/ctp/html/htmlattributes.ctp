@@ -22,6 +22,8 @@ aType(value="") ::= att(key="type",value=value)
 
 aRel(value="") ::= att(key="rel",value=value)
 
+aLang(value="") ::= att(key="lang",value=value)
+
 aHref(value="") ::= att(key="href",value=value)
 
 aSrc(value="") ::= att(key="src",value=value)

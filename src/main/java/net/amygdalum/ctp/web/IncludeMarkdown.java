@@ -2,6 +2,7 @@ package net.amygdalum.ctp.web;
 
 import static net.amygdalum.comtemplate.engine.TemplateParameter.param;
 import static net.amygdalum.comtemplate.engine.TemplateVariable.var;
+import static net.amygdalum.comtemplate.engine.expressions.IntegerLiteral.integer;
 import static net.amygdalum.comtemplate.engine.expressions.StringLiteral.string;
 
 import java.io.IOException;
@@ -16,6 +17,9 @@ import java.util.Map;
 
 import com.vladsch.flexmark.Extension;
 import com.vladsch.flexmark.ast.Document;
+import com.vladsch.flexmark.ast.Heading;
+import com.vladsch.flexmark.ast.NodeVisitor;
+import com.vladsch.flexmark.ast.VisitHandler;
 import com.vladsch.flexmark.ext.jekyll.tag.JekyllTag;
 import com.vladsch.flexmark.ext.jekyll.tag.JekyllTagExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
@@ -42,6 +46,7 @@ public class IncludeMarkdown extends TemplateDefinition {
 	public static final String NAME = "includeMarkdown";
 	public static final String SOURCE = "source";
 	public static final String CHARSET = "charset";
+	public static final String TRANSLATE_HEADING = "translateHeading";
 	public static final String LINKBASE = "linkbase";
 
 	private static final String DEFAULT_CHARSET = "utf-8";
@@ -50,7 +55,7 @@ public class IncludeMarkdown extends TemplateDefinition {
 	private HtmlRenderer renderer;
 
 	public IncludeMarkdown() {
-		super(NAME, SOURCE, param(CHARSET, string(DEFAULT_CHARSET)));
+		super(NAME, SOURCE, param(CHARSET, string(DEFAULT_CHARSET)), param(TRANSLATE_HEADING, integer(0)));
 		DataHolder options = configure();
 		parser = Parser.builder(options)
 			.build();
@@ -85,6 +90,10 @@ public class IncludeMarkdown extends TemplateDefinition {
 				.orElse(var(CHARSET, string(DEFAULT_CHARSET)))
 				.getValue().apply(interpreter, parent)
 				.getText();
+			int translate = findVariable(TRANSLATE_HEADING, variables)
+				.orElse(var(TRANSLATE_HEADING, integer(0)))
+				.getValue().apply(interpreter, parent)
+				.as(Integer.class);
 
 			String base = parent.resolveContextVariable(TemplateProcessor.SOURCE)
 				.map(v -> v.getValue().apply(interpreter, parent).getText())
@@ -98,6 +107,7 @@ public class IncludeMarkdown extends TemplateDefinition {
 			Document node = parser.parse(document);
 
 			computeIncludes(node, interpreter, parent);
+			translateHeadings(node, interpreter, parent, translate);
 
 			node.set(MarkdownLinkResolver.LINKBASE, linkbase);
 			String html = renderer.render(node);
@@ -121,6 +131,22 @@ public class IncludeMarkdown extends TemplateDefinition {
 
 		}
 		doc.set(JekyllTagExtension.INCLUDED_HTML, includes);
+	}
+
+	private void translateHeadings(Document node, TemplateInterpreter interpreter, Scope parent, int translate) {
+		if (translate != 0) {
+			new NodeVisitor(new VisitHandler<>(Heading.class, heading -> {
+				int level = heading.getLevel();
+				int newLevel = level + translate;
+				if (newLevel < 1) {
+					heading.setLevel(1);
+				} else if (newLevel > 6) {
+					heading.setLevel(6);
+				} else {
+					heading.setLevel(newLevel);
+				}
+			})).visit(node);
+		}
 	}
 
 	public String loadDocument(String base, String source, String charset) throws IOException {
