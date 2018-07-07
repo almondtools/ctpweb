@@ -184,3 +184,10 @@ td(content="", attributes=[]) ::= {
   <td<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>><<content>></td>
 }
 
+sup(content="", attributes=[]) ::= {
+  <sup<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>><<content>></sup>
+}.trim()
+
+sub(content="", attributes=[]) ::= {
+  <sub<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>><<content>></sub>
+}.trim()
