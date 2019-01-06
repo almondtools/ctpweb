@@ -101,21 +101,15 @@ span(content="", attributes=[]) ::= {
 }.trim()
 
 div(content="", attributes=[]) ::= {
-  <div<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>>
-    <<content>>
-  </div>
+  <div<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>><<content>></div>
 }.trim()
 
 a(content="", attributes=[]) ::= {
-  <a<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>>
-    <<content>>
-  </a>
+  <a<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>><<content>></a>
 }.trim()
 
 button(content="", attributes=[]) ::= {
-  <button<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>>
-    <<content>>
-  </button>
+  <button<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>><<content>></button>
 }.trim()
 
 img(content="", attributes=[]) ::= {
@@ -125,15 +119,11 @@ img(content="", attributes=[]) ::= {
 }.trim()
 
 ul(content="", attributes=[]) ::= {
-  <ul<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>>
-    <<content>>
-  </ul>
+  <ul<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>><<content>></ul>
 }.trim()
 
 ol(content="", attributes=[]) ::= {
-  <ol<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>>
-    <<content>>
-  </ol>
+  <ol<<for(att=attributes.mergeHtmlAttributes,do={ <<@att>>})>>><<content>></ol>
 }.trim()
 
 li(content="", attributes=[]) ::= {
