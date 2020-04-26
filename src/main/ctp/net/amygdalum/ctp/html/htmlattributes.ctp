@@ -16,6 +16,8 @@ aCharset(value="") ::= att(key="charset",value=value)
 
 aClass(value="") ::= att(key="class",value=value)
 
+aTarget(value="") ::= att(key="target",value=value)
+
 aRole(value="") ::= att(key="role",value=value)
 
 aType(value="") ::= att(key="type",value=value)
