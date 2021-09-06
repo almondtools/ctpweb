@@ -6,8 +6,6 @@ import static org.junit.Assert.assertThat;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
-import net.amygdalum.ctp.web.MarkdownLinkResolver;
-
 public class MarkdownLinkResolverTest {
 
 	private MarkdownLinkResolver resolver;
