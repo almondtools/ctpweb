@@ -9,7 +9,8 @@ import java.io.IOException;
 import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import com.vladsch.flexmark.ast.Document;
@@ -29,20 +30,23 @@ import com.vladsch.flexmark.util.options.DataHolder;
 import com.vladsch.flexmark.util.sequence.CharSubSequence;
 
 import net.amygdalum.comtemplate.engine.ArgumentRequiredException;
+import net.amygdalum.comtemplate.engine.ContextRequiredException;
 import net.amygdalum.comtemplate.engine.Scope;
 import net.amygdalum.comtemplate.engine.TemplateDefinition;
 import net.amygdalum.comtemplate.engine.TemplateExpression;
 import net.amygdalum.comtemplate.engine.TemplateImmediateExpression;
 import net.amygdalum.comtemplate.engine.TemplateInterpreter;
 import net.amygdalum.comtemplate.engine.TemplateVariable;
+import net.amygdalum.comtemplate.engine.WithArguments;
 import net.amygdalum.comtemplate.engine.expressions.EvalAttribute;
 import net.amygdalum.comtemplate.engine.expressions.IOResolutionError;
 import net.amygdalum.comtemplate.engine.expressions.IntegerLiteral;
 import net.amygdalum.comtemplate.engine.expressions.MapLiteral;
 import net.amygdalum.comtemplate.engine.expressions.RawText;
+import net.amygdalum.comtemplate.engine.templates.FileDependent;
 import net.amygdalum.comtemplate.processor.TemplateProcessor;
 
-public class DigestMarkdown extends TemplateDefinition {
+public class DigestMarkdown extends TemplateDefinition implements FileDependent {
 
 	public static final String NAME = "digestMarkdown";
 	public static final String SOURCE = "source";
@@ -72,6 +76,24 @@ public class DigestMarkdown extends TemplateDefinition {
 	}
 
 	@Override
+	public List<Path> files(TemplateInterpreter interpreter, Scope parent, TemplateExpression expression) {
+	    if (!(expression instanceof WithArguments)) {
+	        return Collections.emptyList();
+	    }
+	    List<TemplateVariable> variables = createVariables(((WithArguments)expression).getArguments());
+        String source = findVariable(SOURCE, variables)
+            .orElseThrow(() -> new ArgumentRequiredException(SOURCE))
+            .getValue().apply(interpreter, parent)
+            .getText();
+        String base = parent.resolveContextVariable(TemplateProcessor.SOURCE)
+            .map(v -> v.getValue().apply(interpreter, parent).getText())
+            .orElseThrow(() -> new ContextRequiredException(TemplateProcessor.SOURCE));
+
+        Path path = pathOf(base, source);
+	    return Arrays.asList(path);
+	}
+	
+	@Override
 	public TemplateImmediateExpression evaluate(TemplateInterpreter interpreter, Scope parent, List<TemplateVariable> arguments) {
 		try {
 			List<TemplateVariable> variables = createVariables(arguments);
@@ -95,7 +117,7 @@ public class DigestMarkdown extends TemplateDefinition {
 
 			String base = parent.resolveContextVariable(TemplateProcessor.SOURCE)
 				.map(v -> v.getValue().apply(interpreter, parent).getText())
-				.orElseThrow(() -> new ArgumentRequiredException(TemplateProcessor.SOURCE));
+				.orElseThrow(() -> new ContextRequiredException(TemplateProcessor.SOURCE));
 
 			String linkbase = parent.resolveContextVariable(LINKBASE)
 				.map(v -> v.getValue().apply(interpreter, parent).getText())
@@ -104,8 +126,10 @@ public class DigestMarkdown extends TemplateDefinition {
 				.map(v -> v.getValue())
 				.orElse(MapLiteral.map());
 			String more = new EvalAttribute(config, "more").apply(interpreter, parent).getText();
+            
+			Path path = pathOf(base, source);
+			String document = read(path, charset);
 
-			String document = loadDocument(base, source, charset);
 			Document node = parser.parse(document);
 			node.set(MarkdownLinkResolver.LINKBASE, linkbase);
 
@@ -154,13 +178,10 @@ public class DigestMarkdown extends TemplateDefinition {
 		return moreLink;
 	}
 
-	public String loadDocument(String base, String source, String charset) throws IOException {
-		Path file = Paths.get(source);
-		if (!Files.exists(file)) {
-			file = Paths.get(base, source);
-		}
+	private String read(Path path, String charset) throws IOException {
+        return new String(Files.readAllBytes(path), Charset.forName(charset));
+    }
 
-		return new String(Files.readAllBytes(file), Charset.forName(charset));
-	}
+  
 
 }
