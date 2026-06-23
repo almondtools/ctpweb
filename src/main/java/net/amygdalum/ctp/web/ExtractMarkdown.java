@@ -18,16 +18,16 @@ import java.util.Map;
 import org.jsoup.Jsoup;
 import org.jsoup.select.Elements;
 
-import com.vladsch.flexmark.Extension;
-import com.vladsch.flexmark.ast.Document;
 import com.vladsch.flexmark.ext.jekyll.tag.JekyllTag;
 import com.vladsch.flexmark.ext.jekyll.tag.JekyllTagExtension;
 import com.vladsch.flexmark.html.HtmlRenderer;
 import com.vladsch.flexmark.parser.Parser;
-import com.vladsch.flexmark.profiles.pegdown.Extensions;
-import com.vladsch.flexmark.profiles.pegdown.PegdownOptionsAdapter;
-import com.vladsch.flexmark.util.options.DataHolder;
-import com.vladsch.flexmark.util.options.MutableDataSet;
+import com.vladsch.flexmark.profile.pegdown.Extensions;
+import com.vladsch.flexmark.profile.pegdown.PegdownOptionsAdapter;
+import com.vladsch.flexmark.util.ast.Document;
+import com.vladsch.flexmark.util.data.DataHolder;
+import com.vladsch.flexmark.util.data.MutableDataSet;
+import com.vladsch.flexmark.util.misc.Extension;
 
 import net.amygdalum.comtemplate.engine.ArgumentRequiredException;
 import net.amygdalum.comtemplate.engine.ContextRequiredException;
@@ -69,7 +69,8 @@ public class ExtractMarkdown extends TemplateDefinition implements FileDependent
 
 	private DataHolder configure() {
 		MutableDataSet config = new MutableDataSet(PegdownOptionsAdapter.flexmarkOptions(true, Extensions.ALL & ~-Extensions.ANCHORLINKS));
-		Iterable<Extension> base = config.get(Parser.EXTENSIONS);
+
+		Iterable<Extension> base = Parser.EXTENSIONS.get(config);
 		List<Extension> extensions = new ArrayList<>();
 		for (Extension extension : base) {
 			extensions.add(extension);
@@ -79,24 +80,24 @@ public class ExtractMarkdown extends TemplateDefinition implements FileDependent
 		config.set(Parser.EXTENSIONS, extensions);
 		return config;
 	}
-	
+
 	@Override
 	public List<Path> files(TemplateInterpreter interpreter, Scope parent, TemplateExpression expression) {
-        if (!(expression instanceof WithArguments)) {
-            return Collections.emptyList();
-        }
-        List<TemplateVariable> variables = createVariables(((WithArguments)expression).getArguments());
+		if (!(expression instanceof WithArguments)) {
+			return Collections.emptyList();
+		}
+		List<TemplateVariable> variables = createVariables(((WithArguments) expression).getArguments());
 
-        String source = findVariable(SOURCE, variables)
-            .orElseThrow(() -> new ArgumentRequiredException(SOURCE))
-            .getValue().apply(interpreter, parent)
-            .getText();
-        String base = parent.resolveContextVariable(TemplateProcessor.SOURCE)
-            .map(v -> v.getValue().apply(interpreter, parent).getText())
-            .orElseThrow(() -> new ContextRequiredException(TemplateProcessor.SOURCE));
+		String source = findVariable(SOURCE, variables)
+			.orElseThrow(() -> new ArgumentRequiredException(SOURCE))
+			.getValue().apply(interpreter, parent)
+			.getText();
+		String base = parent.resolveContextVariable(TemplateProcessor.SOURCE)
+			.map(v -> v.getValue().apply(interpreter, parent).getText())
+			.orElseThrow(() -> new ContextRequiredException(TemplateProcessor.SOURCE));
 
-        Path path = pathOf(base, source);
-        return Arrays.asList(path);
+		Path path = pathOf(base, source);
+		return Arrays.asList(path);
 	}
 
 	@Override
@@ -158,7 +159,7 @@ public class ExtractMarkdown extends TemplateDefinition implements FileDependent
 	@SuppressWarnings("unlikely-arg-type")
 	private void computeIncludes(Document doc, TemplateInterpreter interpreter, Scope scope) {
 		Map<String, String> includes = new HashMap<>();
-		List<JekyllTag> tags = doc.get(JekyllTagExtension.TAG_LIST);
+		List<JekyllTag> tags = JekyllTagExtension.TAG_LIST.get(doc);
 		for (JekyllTag tag : tags) {
 			String template = tag.getParameters().toString();
 			if (tag.getTag().equals("include") && !template.isEmpty()) {
@@ -171,8 +172,7 @@ public class ExtractMarkdown extends TemplateDefinition implements FileDependent
 	}
 
 	private String read(Path path, String charset) throws IOException {
-        return new String(Files.readAllBytes(path), Charset.forName(charset));
-    }
-
+		return new String(Files.readAllBytes(path), Charset.forName(charset));
+	}
 
 }
